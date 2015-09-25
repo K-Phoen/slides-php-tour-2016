@@ -1,0 +1,39 @@
+.reveal h1 {
+    font-size: 3em;
+}
+
+.reveal blockquote {
+    width: 80%;
+}
+
+.reveal section img {
+    border: none;
+}
+
+.reveal section ul.small {
+    font-size: 1rem;
+}
+
+.reveal section ul.no-bullet {
+    margin: 0;
+}
+
+.reveal section ul.no-bullet li {
+    list-style: none;
+}
+
+.reveal section pre {
+    width: 92%;
+}
+
+.reveal section div.schema {
+    font-size: 1.3rem;
+}
+
+.reveal section cite {
+    display: inline-block;
+    font-size: 0.6em;
+    line-height: 1.2em;
+    vertical-align: top;
+    font-style: italic;
+}

@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+
+    <title>Be specific – Apex 2015</title>
+
+    <meta name="author" content="Kévin Gomez" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" />
+
+    <link rel="stylesheet" href="reveal.js/css/reveal.css" />
+    <link rel="stylesheet" href="reveal.js/css/theme/sky.css" id="theme" />
+    <link rel="stylesheet" href="css/custom.css" />
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css" />
+
+    <!-- Hoa-related styles (used for the graphs) -->
+    <link href="http://static.hoa-project.net/Css/Core.css" rel="stylesheet" />
+    <link href="http://static.hoa-project.net/Css/Graph.css" rel="stylesheet" />
+</head>
+<body>
+<script src="http://static.hoa-project.net/Javascript/Hoa.js"></script>
+
+<div class="reveal">
+
+    <div class="slides">
+        <section>
+            <h1>Be specific</h1>
+            <h4>Apex 2015</h4>
+            <p>
+                <small><a href="http://www.kevingomez.fr">Kévin Gomez</a> / <a href="http://twitter.com/KPhoen">@KPhoen</a></small>
+            </p>
+        </section>
+
+        <section>
+            <section>
+                <p>
+                    Application complexity keeps increasing
+                </p>
+
+                <aside class="notes">
+                    Depuis quelques années la complexité des applications web est à la hausse.
+                    Que ce soit côté frontend ou côté backend, nos applications
+                    et d'une manière générale les besoins auxquelles elles répondent
+                    sont de plus en plus complexes.
+                </aside>
+            </section>
+
+            <section>
+                <p>
+                    Design patterns / Languages / Tools / …
+                </p>
+
+                <aside class="notes">
+                    Pour répondre à cette tendance, les technologies que nous utilisons évoluent.
+                    On identifie des design patterns, on améliore nos langages de programmation
+                    et on développe de nombreux outils destinés à nous épauler dans nos tâches
+                    quotidiennes.
+                </aside>
+            </section>
+
+            <section>
+                <p>
+                    Agile / XP / BDD / DDD / …
+                </p>
+
+                <aside class="notes">
+                    Et en parallèle de nos outils, nos méthodes évoluent. Souvent avec une mise
+                    en avant du comportement de l'application, du métier ou du domaine.
+                </aside>
+            </section>
+
+            <section>
+                <p>« Web applications » over « Websites »</p>
+                <p>« Business rules » over « Code »</p>
+
+                <aside class="notes">
+                    De l'évolution des besoins découle une évolution des priorités et des manières
+                    de développer des applications.
+                    On ne parle d'ailleurs plus de "site web" mais "d'application web". De même, notre
+                    attention se porte plus particulièrement vers les aspects métier de notre projet, vers
+                    le domaine que l'on modélise et ses règles de fonctionnement.
+                </aside>
+            </section>
+
+            <section>
+                <h3>What should we do with these business rules?</h3>
+
+                <aside class="notes">
+                    On se rend compte qu'au delà des aspects purement techniques
+                    des applications web contemporaines se dégage une notion
+                    primordiale : celle du domaine métier et des règles qui le régissent.
+
+                    Ce sont finalement ces règles et cet univers qui sont complexes,
+                    passionnants et importants à modéliser.
+
+                    Mais ces règles, on en fait quoi dans nos applis ?
+                </aside>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h3>We want to …</h3>
+
+                <ul class="no-bullet">
+                    <li>… understand them ;</li>
+                    <li>… easily express them ;</li>
+                    <li>… compose them ;</li>
+                    <li>… reuse them.</li>
+                </ul>
+
+                <aside class="notes">
+                    Ces règles, qui décrivent le cœur même du domaine que l'on modélise,
+                    doivent respecter quelques contraintes.
+
+                    D'un point de vue humain, elles doivent être facile à exprimer et à
+                    comprendre, de manière à restranscrire aussi fidèlement que possible
+                    le domaine.
+                    Puis d'un point de vue "code", elles doivent être facilement réutilisable,
+                    composable et d'une manière générale respecter toutes les bonnes pratiques
+                    de développement (respecter les principes SOLID, être testables, etc.).
+                </aside>
+            </section>
+
+            <section>
+                <h3>The specification pattern</h3>
+
+                <blockquote cite="http://martinfowler.com/apsupp/spec.pdf">
+                    “The central idea of Specification is to <strong>separate the statement</strong>
+                    of how to match a candidate, <strong>from the candidate object</strong> that it is matched against.”
+                </blockquote>
+                <small>Martin Fowler &mdash; <a href="http://martinfowler.com/apsupp/spec.pdf">http://martinfowler.com/apsupp/spec.pdf</a></small>
+
+                <aside class="notes">
+                    L'idée principale de ce design pattern et de séparer la logique métier – les spécifications –
+                    des objets sur lesquels appliquer la logique – les « candidats ».
+                </aside>
+            </section>
+
+            <section>
+                <p>A specification = a business rule</p>
+                <p>Specifications are composable</p>
+
+                <aside class="notes">
+                    Une spécification permet donc d'exprimer une et une seule règle métier.
+                    Cela nous force bien entendu à les isoler et à les exprimer clairement !
+
+                    Pour exprimer des règles plus complexes, les spécifications sont composables.
+                </aside>
+            </section>
+
+            <section>
+                <h3>Sample specification</h3>
+
+                <pre><code data-trim>
+class BookSupportsWebReader implements Specification
+{
+    const FORMATS_EPUB = ['epub', 'epub 3', 'epub fixed layout'];
+
+    public function isSatisfiedBy($book)
+    {
+        return in_array($book->getFormat(), self::FORMATS_EPUB)
+            && $book->getProtection() !== 'adobe drm';
+    }
+}
+                </code></pre>
+                <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
+
+                <aside class="notes">
+                    Ici, on exprime comment déterminer si un livre peut être lu en ligne.
+                    On retrouve la règle métier ainsi que les méthodes permettant de la composer
+                    avec d'autres règles.
+
+                    C'est le squelette classique d'une spécification... si on omet les méthodes
+                    nécessaires à la composition de spécifications.
+                </aside>
+            </section>
+
+            <section>
+                <h3>Sample specification</h3>
+
+                <pre><code data-trim>
+class BookSupportsWebReader implements Specification
+{
+    const FORMATS_EPUB = ['epub', 'epub 3', 'epub fixed layout'];
+
+    public function isSatisfiedBy($book)
+    {
+        return in_array($book->getFormat(), self::FORMATS_EPUB)
+            && $book->getProtection() !== 'adobe drm';
+    }
+
+    public function andX(Specification $spec)
+    {
+        return new AndSpecification($this, $spec);
+    }
+    public function orSatisfies(Specification $spec) { /* … */ }
+    public function not() { /* … */ }
+}
+                </code></pre>
+
+                <aside class="notes">
+                    Avec ces méthodes on obtient une classe un peu moins jolie,
+                    avec du code boilerplate.
+                </aside>
+            </section>
+
+            <section>
+                <h3>Usage</h3>
+
+                <pre><code data-trim class="php">
+$spec = (new BookSupportsWebReader())
+    ->andX(new AvailableInCountry('FR'))
+    ->andX((new PublisherBlacklisted())->not());
+
+$isViewableOnline = $spec->isSatisfiedBy($book); // bool(true)
+</code></pre>
+
+                <aside class="notes">
+                    Mais d'un autre côté l'utilisation et la composition est sympa.
+
+                    Une spécification seule n'a que peu d'intérêt : la composition de plusieurs
+                    spécifications permet d'exprimer des règles métier plus complexes.
+
+                    On remarque qu'une spécification peut très bien être paramétrée.
+                </aside>
+            </section>
+
+            <section>
+                <h3>Pros …</h3>
+
+                <ul>
+                    <li>SOLID ;</li>
+                    <li>unit-testable.</li>
+                </ul>
+
+                <aside class="notes">
+                    Au point où on en est, on essaie de prendre un peu de recul et
+                    d'analyser les avantages et inconvénients des spécifications quant
+                    à l'expression de nos règles métier et leur utilisation dans l'application.
+
+                    À priori, on respecte les principes SOLID et bonnes pratiques de développement.
+                    On peut même isoler une règle métier fondamentale et l'implémenter de manière testable.
+                </aside>
+            </section>
+
+            <section>
+                <h3>… &amp; cons</h3>
+
+                <ul>
+                    <li>could be clearer ;</li>
+                    <li>only usable on a <code>Book</code> instance.</li>
+                </ul>
+
+                <aside class="notes">
+                    Mais l'expression de la règle métier pourrait être plus claire et
+                    cette spécification n'est utilisable que sur un livre dont on a l'instance !
+                </aside>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h2>RulerZ</h2>
+            </section>
+
+            <section>
+                <h3>Features</h3>
+
+                <ul>
+                    <li><strong>data-agnostic DSL</strong> to express business rules ;</li>
+                    <li>works at the <strong>instance level</strong> ;</li>
+                    <li>works at the <strong>data-source level</strong>.</li>
+                </ul>
+
+                <aside class="notes">
+                    L'idée de RulerZ est simple : on garde nos spécifications mais on les exprime
+                    à l'aide d'un DSL (proche du SQL) et surtout on les utilise **aussi** pour
+                    récupérer les données satisfaisant ces spécifications.
+
+                    La même spécification peut donc à la fois servir de manière "classique" pour tester un
+                    objet donné mais aussi pour récupérer les objets la satisfaisant à partir d'une base
+                    de données, d'Elasticsearch, …
+                </aside>
+            </section>
+
+            <section>
+                <h3>Same rule</h3>
+
+                <pre><code data-trim>
+format IN :formats_epub AND protection != "adobe drm"
+</code></pre>
+                <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
+
+                <aside class="notes">
+                    Le DSL est simple, extensible, volontairement très proche du SQL (mêmes objectifs !)
+                    et permet d'exprimer aisément nos règles métier.
+                </aside>
+            </section>
+
+            <section>
+                <h3>Same usage</h3>
+
+                <pre><code data-trim>
+$rule = 'format IN :formats_epub AND protection != "adobe drm" AND
+"fr" IN countries AND NOT(publisher.blacklisted)';
+
+// use the textual rule
+$isViewableOnline = $rulerz->satisfies($book, $rule, [
+    'formats_epub' => ['epub', 'epub 3', 'epub fixed layout'],
+]); // bool(true)
+</code></pre>
+
+                <aside class="notes">
+                </aside>
+            </section>
+
+            <section>
+                <h3>Same specification</h3>
+                <pre><code data-trim>
+class BookSupportsWebReader implements Specification
+{
+    public function getRule()
+    {
+        return 'format IN :formats_epub AND protection != "adobe drm"';
+    }
+
+    public function getParameters()
+    {
+        return [
+            'formats_epub' => ['epub', 'epub 3', 'epub fixed layout'],
+        ];
+    }
+}
+                </code></pre>
+
+                <aside class="notes">
+                    Bien entendu, travailler avec des objets représentant nos spécifications
+                    permet de les tester et composer plus facilement qu'avec de simples chaines
+                    de caractères.
+
+                    Une specification ne fait qu'encapsuler une règle textuelle en les rendant testables
+                    et en permettant de les réutiliser un peu partout dans la base de code.
+                </aside>
+            </section>
+
+            <section>
+                <h3>Same usage</h3>
+
+                <pre><code data-trim>
+// build a specification object
+$spec = (new BookSupportsWebReader())
+    ->andX(new AvailableInCountry('FR'))
+    ->andX((new PublisherBlacklisted())->not());
+
+$isViewableOnline = $rulerz->satisfiesSpec($book, $spec); // bool(true)
+</code></pre>
+
+                <aside class="notes">
+                    Que ce soit avec une règle textuelle ou un object de spécification,
+                    vérifier qu'un objet lui est conforme est facile.
+                </aside>
+            </section>
+
+            <section>
+                <h3>Usage on a datasource</h3>
+
+                <pre><code data-trim>
+// our app uses Doctrine to query our database
+$queryBuilder = $entityManager
+    ->createQueryBuilder()
+    ->select('book')
+    ->from('Entity\Book', 'book');
+</code></pre>
+
+                <pre><code data-trim>
+// textual rule
+$viewableOnlineBooks = $rulerz->filter($queryBuilder, $rule, [
+    'formats_epub' => ['epub', 'epub 3', 'epub fixed layout'],
+]);
+
+// specification object
+$viewableOnlineBooks = $rulerz->filterSpec($queryBuilder, $spec);
+
+var_dump($viewableOnlineBooks); // array&lt;Entity\Book&gt;
+</code></pre>
+
+                <aside class="notes">
+                    Même règle ou spécification, mais cette fois on récupère des données
+                    au lieu de vérifier la validité d'un objet qu'on a déjà.
+
+                    Il est important de noter qu'à la place d'un QueryBuilder Doctrine,
+                    on aurait pu utiliser Pomm, ou un client Elasticsearch pour aller
+                    chercher les données ailleurs.
+                </aside>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h2>A few use cases</h2>
+            </section>
+
+            <section>
+                <h3>Repositories – Before</h3>
+
+                <pre><code data-trim>
+class DoctrineBookRepository implements BookRepository
+{
+    public function findByEan($ean) { }
+    public function findByTitle($title) { }
+    public function findPublished() { }
+    public function findViewableOnline() { }
+    public function findNotViewableOnline() { }
+
+    public function findPublishedAndViewableOnline() { }
+
+    // …
+}
+                </code></pre>
+
+                <aside class="notes">
+                    Doctrine les met en avant mais c'est une pratique répandue : les Repository
+                    permettent d'isoler l'accès au données du reste de l'application.
+                    Le soucis vient de l'explosion du nombre de méthodes à implémenter pour
+                    permettre d'accéder aux données ... pas très SOLID !
+                </aside>
+            </section>
+
+            <section>
+                <h3>Repositories – After</h3>
+
+                <pre><code data-trim>
+class DoctrineBookRepository implements BookRepository
+{
+    public function matching(Specification $spec)
+    {
+        $qb = $this->createQueryBuilder('c');
+
+        return $this->rulerz->satisfiesSpec($qb, $spec);
+    }
+}
+                </code></pre>
+
+                <aside class="notes">
+                    Ce problème est résolu par l'utilisation conjointe des spécifications
+                    et de RulerZ, dans une méthode <code>matching</code>
+                </aside>
+            </section>
+
+            <section>
+                <h2>Other use cases</h2>
+
+                <p>Dynamic rules (e-commerce coupons) / Search forms / …</p>
+
+                <aside class="notes">
+                    L'exemple classique des bons de réduction : un administrateur
+                    peut saisir lui-même via une interface les conditions d'utilisation
+                    d'un bon de réduction.
+                </aside>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h2>Hoa &amp; RulerZ</h2>
+            </section>
+
+            <section>
+                <h3>Architecture</h3>
+
+                <div id="transformation" class="schema"></div><script>
+Hoa.Document.onReady(function ( ) {
+
+  var paper    = Hoa.Graph(Hoa.$('#transformation'), 800, 300);
+  var grid     = paper.grid(0, 0, 800, 300, 5, 3);
+  var rule     = grid.push(paper.rect(0, 0, 110, 80, 3, 'Rule'), 0, 1);
+  var parser   = grid.push(paper.rect(0, 0, 110, 80, 3, 'Parser'), 1, 1);
+  var compiler = grid.push(paper.rect(0, 0, 110, 80, 3, 'Compiler'), 2, 1);
+  var php_code = grid.push(paper.rect(0, 0, 110, 80, 3, 'PHP code'), 4, 0);
+  var sql_code = grid.push(paper.rect(0, 0, 110, 80, 3, 'SQL query'), 4, 1);
+  var es_query = grid.push(paper.rect(0, 0, 110, 80, 3, 'ES query'), 4, 2);
+
+  paper.link.between(rule, parser, '');
+  paper.link.between(parser, compiler, 'IR');
+  paper.link.between(compiler, php_code, '');
+  paper.link.between(compiler, sql_code, '');
+  paper.link.between(compiler, es_query, '');
+});
+</script>
+
+                <aside class="notes">
+                    Pour parler de la place de Hoa dans RulerZ, je dois rapidement présenter
+                    son architecture.
+
+                    Grossièrement, pour qu'une règle puisse être "utilisée" elle doit être :
+                    - parsée : une représentation intermédiaire résulte de cette opération ;
+                    - puis compilée vers la cible d'exécution voulue : en utilisant cette représentation intermédiaire.
+
+                    RulerZ tire 95% de la grammaire de son DSL, 95% de son Parseur et sa représentation intermédiaire de Hoa\Ruler.
+                    Hoa\Ruler tient donc un rôle primordial dans RulerZ !
+                </aside>
+            </section>
+
+            <section>
+                <h3>Dependencies</h3>
+
+                <p>Hard: <code>Hoa\Ruler</code></p>
+                <p>Implied: <code>Hoa\Compiler</code></p>
+            </section>
+
+        </section>
+
+        <section>
+            <h2>Thanks!</h2>
+
+            <h6>Going further</h6>
+
+            <ul class="small">
+                <li><a href="https://github.com/K-Phoen/rulerz">https://github.com/K-Phoen/rulerz</a></li>
+                <li><a href="http://www.whitewashing.de/2013/03/04/doctrine_repositories.html">On Taming Repository Classes in Doctrine</a></li>
+                <li><a href="http://blog.kevingomez.fr/2015/02/07/on-taming-repository-classes-in-doctrine-among-other-things/">On Taming Repository Classes in Doctrine… Among other things</a></li>
+                <li><a href="http://blog.kevingomez.fr/2015/03/14/rulerz-specifications-and-symfony-are-in-a-boat/">RulerZ, specifications and Symfony are in a boat</a></li>
+            </ul>
+        </section>
+    </div>
+</div>
+
+<script src="reveal.js/lib/js/head.min.js"></script>
+<script src="reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available at:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+
+    transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+    // Optional reveal.js plugins
+    dependencies: [
+        //{ src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+        { src: 'reveal.js/plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+        { src: 'reveal.js/plugin/notes/notes.js', async: true }
+    ]
+});
+</script>
+<script src="http://static.hoa-project.net/Javascript/Hoa.Graph.js"></script>
+<script src="http://static.hoa-project.net/Javascript/Hoa.Graph.style.js"></script>
+</body>
+</html>
