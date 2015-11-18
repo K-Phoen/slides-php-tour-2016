@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>Be specific – Apex 2015</title>
+    <title>Soyez spécifiques – Forum PHP 2015</title>
 
     <meta name="author" content="Kévin Gomez" />
 
@@ -30,8 +30,8 @@
 
     <div class="slides">
         <section>
-            <h1>Be specific</h1>
-            <h4>Apex 2015</h4>
+            <h1>Soyez spécifiques</h1>
+            <h4>Forum PHP 2015</h4>
             <p>
                 <small><a href="http://www.kevingomez.fr">Kévin Gomez</a> / <a href="http://twitter.com/KPhoen">@KPhoen</a></small>
             </p>
@@ -53,7 +53,7 @@
 
             <section>
                 <p>
-                    Design patterns / Languages / Tools / …
+                    Languages / Tools / Design patterns / …
                 </p>
 
                 <aside class="notes">
@@ -77,7 +77,7 @@
 
             <section>
                 <p>« Web applications » over « Websites »</p>
-                <p>« Business rules » over « Code »</p>
+                <p class="fragment">« Business rules » over « Code »</p>
 
                 <aside class="notes">
                     De l'évolution des besoins découle une évolution des priorités et des manières
@@ -110,9 +110,9 @@
 
                 <ul class="no-bullet">
                     <li>… understand them ;</li>
-                    <li>… easily express them ;</li>
-                    <li>… compose them ;</li>
-                    <li>… reuse them.</li>
+                    <li class="fragment">… easily express them ;</li>
+                    <li class="fragment">… reuse them ;</li>
+                    <li class="fragment">… compose them.</li>
                 </ul>
 
                 <aside class="notes">
@@ -165,8 +165,8 @@ class BookSupportsWebReader implements Specification
 
     public function isSatisfiedBy($book)
     {
-        return in_array($book->getFormat(), self::FORMATS_EPUB)
-            && $book->getProtection() !== 'adobe drm';
+        return in_array($book-&gt;getFormat(), self::FORMATS_EPUB)
+            &amp;&amp; $book-&gt;getProtection() !== 'adobe drm';
     }
 }
                 </code></pre>
@@ -174,9 +174,6 @@ class BookSupportsWebReader implements Specification
 
                 <aside class="notes">
                     Ici, on exprime comment déterminer si un livre peut être lu en ligne.
-                    On retrouve la règle métier ainsi que les méthodes permettant de la composer
-                    avec d'autres règles.
-
                     C'est le squelette classique d'une spécification... si on omet les méthodes
                     nécessaires à la composition de spécifications.
                 </aside>
@@ -192,8 +189,8 @@ class BookSupportsWebReader implements Specification
 
     public function isSatisfiedBy($book)
     {
-        return in_array($book->getFormat(), self::FORMATS_EPUB)
-            && $book->getProtection() !== 'adobe drm';
+        return in_array($book-&gt;getFormat(), self::FORMATS_EPUB)
+            &amp;&amp; $book-&gt;getProtection() !== 'adobe drm';
     }
 
     public function andX(Specification $spec)
@@ -204,6 +201,7 @@ class BookSupportsWebReader implements Specification
     public function not() { /* … */ }
 }
                 </code></pre>
+                <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
 
                 <aside class="notes">
                     Avec ces méthodes on obtient une classe un peu moins jolie,
@@ -216,10 +214,10 @@ class BookSupportsWebReader implements Specification
 
                 <pre><code data-trim class="php">
 $spec = (new BookSupportsWebReader())
-    ->andX(new AvailableInCountry('FR'))
-    ->andX((new PublisherBlacklisted())->not());
+    -&gt;andX(new AvailableInCountry('FR'))
+    -&gt;andX((new PublisherBlacklisted())-&gt;not());
 
-$isViewableOnline = $spec->isSatisfiedBy($book); // bool(true)
+$isViewableOnline = $spec-&gt;isSatisfiedBy($book); // bool(true)
 </code></pre>
 
                 <aside class="notes">
@@ -339,6 +337,7 @@ class BookSupportsWebReader implements Specification
     }
 }
                 </code></pre>
+                <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
 
                 <aside class="notes">
                     Bien entendu, travailler avec des objets représentant nos spécifications
@@ -372,20 +371,15 @@ $isViewableOnline = $rulerz->satisfiesSpec($book, $spec); // bool(true)
                 <h3>Usage on a datasource</h3>
 
                 <pre><code data-trim>
-// our app uses Doctrine to query our database
+// our app uses Doctrine to query the database
 $queryBuilder = $entityManager
     ->createQueryBuilder()
     ->select('book')
     ->from('Entity\Book', 'book');
 </code></pre>
-
+<div class="v-space" style="margin-top: 50px"></div>
                 <pre><code data-trim>
-// textual rule
-$viewableOnlineBooks = $rulerz->filter($queryBuilder, $rule, [
-    'formats_epub' => ['epub', 'epub 3', 'epub fixed layout'],
-]);
-
-// specification object
+// and we want to find the viewable online books
 $viewableOnlineBooks = $rulerz->filterSpec($queryBuilder, $spec);
 
 var_dump($viewableOnlineBooks); // array&lt;Entity\Book&gt;
@@ -475,7 +469,8 @@ class DoctrineBookRepository implements BookRepository
             <section>
                 <h3>Architecture</h3>
 
-                <div id="transformation" class="schema"></div><script>
+                <div id="transformation" class="schema"></div>
+<script>
 Hoa.Document.onReady(function ( ) {
 
   var paper    = Hoa.Graph(Hoa.$('#transformation'), 800, 300);
