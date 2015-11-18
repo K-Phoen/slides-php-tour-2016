@@ -18,14 +18,8 @@
 
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css" />
-
-    <!-- Hoa-related styles (used for the graphs) -->
-    <link href="http://static.hoa-project.net/Css/Core.css" rel="stylesheet" />
-    <link href="http://static.hoa-project.net/Css/Graph.css" rel="stylesheet" />
 </head>
 <body>
-<script src="http://static.hoa-project.net/Javascript/Hoa.js"></script>
-
 <div class="reveal">
 
     <div class="slides">
@@ -66,7 +60,7 @@
 
             <section>
                 <p>
-                    Agile / XP / BDD / DDD / …
+                    Agile / BDD / DDD / …
                 </p>
 
                 <aside class="notes">
@@ -158,8 +152,8 @@
             <section>
                 <h3>Sample specification</h3>
 
-                <pre><code data-trim>
-class BookSupportsWebReader implements Specification
+                <pre><code class="php" data-trim>
+class SupportsWebReader implements Specification
 {
     const FORMATS_EPUB = ['epub', 'epub 3', 'epub fixed layout'];
 
@@ -182,8 +176,8 @@ class BookSupportsWebReader implements Specification
             <section>
                 <h3>Sample specification</h3>
 
-                <pre><code data-trim>
-class BookSupportsWebReader implements Specification
+                <pre><code class="php" data-trim>
+class SupportsWebReader implements Specification
 {
     const FORMATS_EPUB = ['epub', 'epub 3', 'epub fixed layout'];
 
@@ -212,8 +206,8 @@ class BookSupportsWebReader implements Specification
             <section>
                 <h3>Usage</h3>
 
-                <pre><code data-trim class="php">
-$spec = (new BookSupportsWebReader())
+                <pre><code class="php" data-trim>
+$spec = (new SupportsWebReader())
     -&gt;andX(new AvailableInCountry('FR'))
     -&gt;andX((new PublisherBlacklisted())-&gt;not());
 
@@ -291,7 +285,7 @@ $isViewableOnline = $spec-&gt;isSatisfiedBy($book); // bool(true)
             <section>
                 <h3>Same rule</h3>
 
-                <pre><code data-trim>
+                <pre><code class="php" data-trim>
 format IN :formats_epub AND protection != "adobe drm"
 </code></pre>
                 <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
@@ -305,9 +299,8 @@ format IN :formats_epub AND protection != "adobe drm"
             <section>
                 <h3>Same usage</h3>
 
-                <pre><code data-trim>
-$rule = 'format IN :formats_epub AND protection != "adobe drm" AND
-"fr" IN countries AND NOT(publisher.blacklisted)';
+                <pre><code class="php" data-trim>
+$rule = 'format IN :formats_epub AND protection != "adobe drm"';
 
 // use the textual rule
 $isViewableOnline = $rulerz->satisfies($book, $rule, [
@@ -321,8 +314,8 @@ $isViewableOnline = $rulerz->satisfies($book, $rule, [
 
             <section>
                 <h3>Same specification</h3>
-                <pre><code data-trim>
-class BookSupportsWebReader implements Specification
+                <pre><code class="php" data-trim>
+class SupportsWebReader extends AbstractSpecification
 {
     public function getRule()
     {
@@ -352,9 +345,9 @@ class BookSupportsWebReader implements Specification
             <section>
                 <h3>Same usage</h3>
 
-                <pre><code data-trim>
+                <pre><code class="php" data-trim>
 // build a specification object
-$spec = (new BookSupportsWebReader())
+$spec = (new SupportsWebReader())
     ->andX(new AvailableInCountry('FR'))
     ->andX((new PublisherBlacklisted())->not());
 
@@ -370,7 +363,7 @@ $isViewableOnline = $rulerz->satisfiesSpec($book, $spec); // bool(true)
             <section>
                 <h3>Usage on a datasource</h3>
 
-                <pre><code data-trim>
+                <pre><code class="php" data-trim>
 // our app uses Doctrine to query the database
 $queryBuilder = $entityManager
     ->createQueryBuilder()
@@ -378,7 +371,7 @@ $queryBuilder = $entityManager
     ->from('Entity\Book', 'book');
 </code></pre>
 <div class="v-space" style="margin-top: 50px"></div>
-                <pre><code data-trim>
+                <pre><code class="php" data-trim>
 // and we want to find the viewable online books
 $viewableOnlineBooks = $rulerz->filterSpec($queryBuilder, $spec);
 
@@ -404,7 +397,7 @@ var_dump($viewableOnlineBooks); // array&lt;Entity\Book&gt;
             <section>
                 <h3>Repositories – Before</h3>
 
-                <pre><code data-trim>
+                <pre><code class="php" data-trim>
 class DoctrineBookRepository implements BookRepository
 {
     public function findByEan($ean) { }
@@ -430,7 +423,7 @@ class DoctrineBookRepository implements BookRepository
             <section>
                 <h3>Repositories – After</h3>
 
-                <pre><code data-trim>
+                <pre><code class="php" data-trim>
 class DoctrineBookRepository implements BookRepository
 {
     public function matching(Specification $spec)
@@ -449,9 +442,26 @@ class DoctrineBookRepository implements BookRepository
             </section>
 
             <section>
+                <h2>Search forms</h2>
+
+                <p>
+                    <img src="./images/form_filter_catalog.png" /><br />
+                    <i>One field → One specification object</i>
+                </p>
+
+                <aside class="notes">
+                    Face à un formulaire aussi massif que celui-ci et destiné uniquement à
+                    filtrer des données on peut considérer chaque champ comme une "spécification".
+                    En tirant parti (par exemple) du composant Form de Symfony on peut aisément
+                    convertir chaque valeur saisie par l'utilisateur en son équivalent en spécification
+                    et se reposer sur RulerZ pour tout ce qui concerne le filtrage des données.
+                </aside>
+            </section>
+
+            <section>
                 <h2>Other use cases</h2>
 
-                <p>Dynamic rules (e-commerce coupons) / Search forms / …</p>
+                <p>e-commerce coupons / Dynamic rules / …</p>
 
                 <aside class="notes">
                     L'exemple classique des bons de réduction : un administrateur
@@ -459,57 +469,6 @@ class DoctrineBookRepository implements BookRepository
                     d'un bon de réduction.
                 </aside>
             </section>
-        </section>
-
-        <section>
-            <section>
-                <h2>Hoa &amp; RulerZ</h2>
-            </section>
-
-            <section>
-                <h3>Architecture</h3>
-
-                <div id="transformation" class="schema"></div>
-<script>
-Hoa.Document.onReady(function ( ) {
-
-  var paper    = Hoa.Graph(Hoa.$('#transformation'), 800, 300);
-  var grid     = paper.grid(0, 0, 800, 300, 5, 3);
-  var rule     = grid.push(paper.rect(0, 0, 110, 80, 3, 'Rule'), 0, 1);
-  var parser   = grid.push(paper.rect(0, 0, 110, 80, 3, 'Parser'), 1, 1);
-  var compiler = grid.push(paper.rect(0, 0, 110, 80, 3, 'Compiler'), 2, 1);
-  var php_code = grid.push(paper.rect(0, 0, 110, 80, 3, 'PHP code'), 4, 0);
-  var sql_code = grid.push(paper.rect(0, 0, 110, 80, 3, 'SQL query'), 4, 1);
-  var es_query = grid.push(paper.rect(0, 0, 110, 80, 3, 'ES query'), 4, 2);
-
-  paper.link.between(rule, parser, '');
-  paper.link.between(parser, compiler, 'IR');
-  paper.link.between(compiler, php_code, '');
-  paper.link.between(compiler, sql_code, '');
-  paper.link.between(compiler, es_query, '');
-});
-</script>
-
-                <aside class="notes">
-                    Pour parler de la place de Hoa dans RulerZ, je dois rapidement présenter
-                    son architecture.
-
-                    Grossièrement, pour qu'une règle puisse être "utilisée" elle doit être :
-                    - parsée : une représentation intermédiaire résulte de cette opération ;
-                    - puis compilée vers la cible d'exécution voulue : en utilisant cette représentation intermédiaire.
-
-                    RulerZ tire 95% de la grammaire de son DSL, 95% de son Parseur et sa représentation intermédiaire de Hoa\Ruler.
-                    Hoa\Ruler tient donc un rôle primordial dans RulerZ !
-                </aside>
-            </section>
-
-            <section>
-                <h3>Dependencies</h3>
-
-                <p>Hard: <code>Hoa\Ruler</code></p>
-                <p>Implied: <code>Hoa\Compiler</code></p>
-            </section>
-
         </section>
 
         <section>
@@ -550,7 +509,5 @@ Reveal.initialize({
     ]
 });
 </script>
-<script src="http://static.hoa-project.net/Javascript/Hoa.Graph.js"></script>
-<script src="http://static.hoa-project.net/Javascript/Hoa.Graph.style.js"></script>
 </body>
 </html>

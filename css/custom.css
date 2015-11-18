@@ -37,3 +37,9 @@
     vertical-align: top;
     font-style: italic;
 }
+
+.reveal .slide-number {
+    font-size: 0.8em;
+    color: #3b759e;
+    opacity: 0.8;
+}
