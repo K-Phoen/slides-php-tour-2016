@@ -18,8 +18,14 @@
 
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css" />
+
+    <!-- Hoa-related styles (used for the graphs) -->
+    <link href="http://static.hoa-project.net/Css/Core.css" rel="stylesheet" />
+    <link href="http://static.hoa-project.net/Css/Graph.css" rel="stylesheet" />
 </head>
 <body>
+<script src="http://static.hoa-project.net/Javascript/Hoa.js"></script>
+
 <div class="reveal">
 
     <div class="slides">
@@ -391,6 +397,41 @@ var_dump($viewableOnlineBooks); // array&lt;Entity\Book&gt;
 
         <section>
             <section>
+                <h2>Under the hood</h2>
+            </section>
+
+            <section>
+                <h3>Architecture</h3>
+
+                <div id="transformation" class="schema"><svg viewBox="0 0 800 300" version="1.1"><g transform="translate(25, 110)"><rect filter="url(#shadow)" stroke-width="2px" stroke="#fff" fill="url(#boxFill)" ry="3" rx="3" height="80" width="110" y="0" x="0"></rect><text dominant-baseline="middle" text-anchor="middle" fill="#ffffbe" y="40" x="55">Rule</text></g><g transform="translate(185, 110)"><rect filter="url(#shadow)" stroke-width="2px" stroke="#fff" fill="url(#boxFill)" ry="3" rx="3" height="80" width="110" y="0" x="0"></rect><text dominant-baseline="middle" text-anchor="middle" fill="#ffffbe" y="40" x="55">Parser</text></g><g transform="translate(345, 110)"><rect filter="url(#shadow)" stroke-width="2px" stroke="#fff" fill="url(#boxFill)" ry="3" rx="3" height="80" width="110" y="0" x="0"></rect><text dominant-baseline="middle" text-anchor="middle" fill="#ffffbe" y="40" x="55">Compiler</text></g><g transform="translate(665, 10)"><rect filter="url(#shadow)" stroke-width="2px" stroke="#fff" fill="url(#boxFill)" ry="3" rx="3" height="80" width="110" y="0" x="0"></rect><text dominant-baseline="middle" text-anchor="middle" fill="#ffffbe" y="40" x="55">PHP code</text></g><g transform="translate(665, 110)"><rect filter="url(#shadow)" stroke-width="2px" stroke="#fff" fill="url(#boxFill)" ry="3" rx="3" height="80" width="110" y="0" x="0"></rect><text dominant-baseline="middle" text-anchor="middle" fill="#ffffbe" y="40" x="55">SQL query</text></g><g transform="translate(665, 210)"><rect filter="url(#shadow)" stroke-width="2px" stroke="#fff" fill="url(#boxFill)" ry="3" rx="3" height="80" width="110" y="0" x="0"></rect><text dominant-baseline="middle" text-anchor="middle" fill="#ffffbe" y="40" x="55">ES query</text></g><path d="M 135,150 C160,150 160,150 177,150" marker-end="url(#arrow)" stroke-width="1px" stroke="#000" fill="none"></path><text font-size="80%" dominant-baseline="middle" text-anchor="middle" fill="#f18d05" y="130" x="160"></text><path d="M 295,150 C320,150 320,150 337,150" marker-end="url(#arrow)" stroke-width="1px" stroke="#000" fill="none"></path><text font-size="80%" dominant-baseline="middle" text-anchor="middle" fill="#f18d05" y="130" x="320">IR</text><path d="M 455,132.8125 C560,132.8125 560,67.1875 657,67.1875" marker-end="url(#arrow)" stroke-width="1px" stroke="#000" fill="none"></path><text font-size="80%" dominant-baseline="middle" text-anchor="middle" fill="#f18d05" y="80" x="560"></text><path d="M 455,150 C560,150 560,150 657,150" marker-end="url(#arrow)" stroke-width="1px" stroke="#000" fill="none"></path><text font-size="80%" dominant-baseline="middle" text-anchor="middle" fill="#f18d05" y="130" x="560">Targets</text><path d="M 455,167.1875 C560,167.1875 560,232.8125 657,232.8125" marker-end="url(#arrow)" stroke-width="1px" stroke="#000" fill="none"></path><text font-size="80%" dominant-baseline="middle" text-anchor="middle" fill="#f18d05" y="180" x="560"></text></svg></div>
+
+<!--
+                <div id="transformation" class="schema"></div>
+<script>
+Hoa.Document.onReady(function ( ) {
+
+  var paper    = Hoa.Graph(Hoa.$('#transformation'), 800, 300);
+  var grid     = paper.grid(0, 0, 800, 300, 5, 3);
+  var rule     = grid.push(paper.rect(0, 0, 110, 80, 3, 'Rule'), 0, 1);
+  var parser   = grid.push(paper.rect(0, 0, 110, 80, 3, 'Parser'), 1, 1);
+  var compiler = grid.push(paper.rect(0, 0, 110, 80, 3, 'Compiler'), 2, 1);
+  var php_code = grid.push(paper.rect(0, 0, 110, 80, 3, 'PHP code'), 4, 0);
+  var sql_code = grid.push(paper.rect(0, 0, 110, 80, 3, 'SQL query'), 4, 1);
+  var es_query = grid.push(paper.rect(0, 0, 110, 80, 3, 'ES query'), 4, 2);
+
+  paper.link.between(rule, parser, '');
+  paper.link.between(parser, compiler, 'IR');
+  paper.link.between(compiler, php_code, '');
+  paper.link.between(compiler, sql_code, 'Targets');
+  paper.link.between(compiler, es_query, '');
+});
+</script>
+-->
+            </section>
+        </section>
+
+        <section>
+            <section>
                 <h2>A few use cases</h2>
             </section>
 
@@ -518,5 +559,7 @@ Reveal.initialize({
     ]
 });
 </script>
+<script src="http://static.hoa-project.net/Javascript/Hoa.Graph.js"></script>
+<script src="http://static.hoa-project.net/Javascript/Hoa.Graph.style.js"></script>
 </body>
 </html>
