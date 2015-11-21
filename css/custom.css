@@ -10,8 +10,8 @@
     border: none;
 }
 
-.reveal section ul.small {
-    font-size: 1rem;
+.reveal section .small {
+    font-size: 1.4rem;
 }
 
 .reveal section ul.no-bullet {
