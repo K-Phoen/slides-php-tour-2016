@@ -479,7 +479,7 @@ class DoctrineBookRepository implements BookRepository
 {
     public function matching(Specification $spec)
     {
-        $qb = $this->createQueryBuilder('c');
+        $qb = $this->createQueryBuilder('book');
 
         return $this->rulerz->satisfiesSpec($qb, $spec);
     }
