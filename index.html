@@ -38,6 +38,12 @@
         </section>
 
         <section>
+            <p>
+                Press <kbd>[s]</kbd> to read the speaker notes (will open a new window).
+            </p>
+        </section>
+
+        <section>
             <section>
                 <p>
                     Application complexity keeps increasing
@@ -82,9 +88,18 @@
                 <aside class="notes">
                     De l'évolution des besoins découle une évolution des priorités et des manières
                     de développer des applications.
+
                     On ne parle d'ailleurs plus de "site web" mais "d'application web". De même, notre
                     attention se porte plus particulièrement vers les aspects métier de notre projet, vers
                     le domaine que l'on modélise et ses règles de fonctionnement.
+
+                    En tant que développeur, nous produisons de la valeur ajoutée en écrivant du code.
+                    Ou plus exactement en développant des outils destinés à répondre aux besoins de nos
+                    clients/utilisateurs.
+
+                    Mais au delà du code, un développeur produit le plus de valeur ajoutée quand il arrive,
+                    le plus fidèlement possible, à retranscrire dans l'application qu'il conçoit le coeur
+                    des règles métier de son client.
                 </aside>
             </section>
 
@@ -99,7 +114,9 @@
                     Ce sont finalement ces règles et cet univers qui sont complexes,
                     passionnants et importants à modéliser.
 
-                    Mais ces règles, on en fait quoi dans nos applis ?
+                    Mais ces règles, on en fait quoi dans nos applis ? Concrètement,
+                    en termes de code, de design patterns et autre, comment pouvons-nous
+                    les modéliser ?
                 </aside>
             </section>
         </section>
@@ -116,20 +133,42 @@
                 </ul>
 
                 <aside class="notes">
-                    Ces règles, qui décrivent le cœur même du domaine que l'on modélise,
-                    doivent respecter quelques contraintes.
+                    Tout d'abord, fixons nous quelques objectifs quand à ces règles métier.
 
-                    D'un point de vue humain, elles doivent être facile à exprimer et à
-                    comprendre, de manière à restranscrire aussi fidèlement que possible
-                    le domaine.
-                    Puis d'un point de vue "code", elles doivent être facilement réutilisable,
-                    composable et d'une manière générale respecter toutes les bonnes pratiques
-                    de développement (respecter les principes SOLID, être testables, etc.).
+                    En tant que développeur, je veux tout d'abord comprendre les règles qui me
+                    seront énoncées par mon client, un expert du domaine ou un product owner.
+                    La première étape dans l'implémentation passe donc bien évidemment par la
+                    compréhension.
+
+                    Vient ensuite le temps de l'expression. Une fois les règles métier acquises,
+                    il faudra les ré-exprimer. Que ce soit dans de la documentation ou directement
+                    dans du code applicatif, ces règles doivent être clairement retransmises. Aussi
+                    bien au moment de l'implémentation initiale que pour la maintenance future du code
+                    par d'autres développeurs, l'expression des règles métier doit être limpide.
+
+                    Bien entendu, quelque soit la manière utilisée pour représenter ces règles au
+                    sein de l'application nous aurons à coeur d'éviter leur duplication. Comme n'importe
+                    quel bout de code, nos règles devront respecter toutes les bonnes pratiques du
+                    développement logiciel.
+
+                    Une fois chaque "règle unitaire" écrite, il faudra être capable de les composer
+                    pour en créer de plus complexes. Par composition on entend simplement des
+                    conjonctions de règles (ET logique), disjonctions (OU logique) et négations.
                 </aside>
             </section>
 
             <section>
                 <h3>Specifications</h3>
+
+                <aside class="notes">
+                    Nous parlions tout à l'heure de design patterns que nous pouvions emprunter
+                    à d'autres langages ou que nous faisions émerger.
+
+                    Et bien il existe déjà un pattern pour la problématique de l'expression des règles
+                    métier au sein d'une application : le pattern « Specification ».
+
+                    C'est ce pattern et son utilisation qui va nous intéresser.
+                </aside>
             </section>
 
             <section>
@@ -142,8 +181,11 @@
                 <small>Martin Fowler &mdash; <a href="http://martinfowler.com/apsupp/spec.pdf">http://martinfowler.com/apsupp/spec.pdf</a></small>
 
                 <aside class="notes">
-                    L'idée principale de ce design pattern et de séparer la logique métier – les spécifications –
+                    L'idée principale de ce pattern et de séparer la logique métier – les spécifications –
                     des objets sur lesquels appliquer la logique – les « candidats ».
+
+                    Nous aurons donc deux classes distinctes : l'une contenant les données de notre application et
+                    l'autre contenant une règle qui sera utilisable sur ces données.
                 </aside>
             </section>
 
@@ -153,9 +195,9 @@
 
                 <aside class="notes">
                     Une spécification permet donc d'exprimer une et une seule règle métier.
-                    Cela nous force bien entendu à les isoler et à les exprimer clairement !
+                    Chaque règle étant encapsulée dans une classe qui la représente.
 
-                    Pour exprimer des règles plus complexes, les spécifications sont composables.
+                    Pour exprimer des règles plus complexes, les spécifications sont composables (ET, OU et NON).
                 </aside>
             </section>
 
@@ -163,6 +205,17 @@
                 <h3>Webreader</h3>
                 <img src="./images/webreader.png" />
                 <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
+
+                <aside class="notes">
+                    Pour imager un peu plus mes propos, voyons concrètement comment implémenter une spécification.
+
+                    Je travaille pour TEA - The Ebook Alternative, une entreprise qui édite une plateforme de vente
+                    et distribution de ebooks. Parmi les fonctionnalités de la plateforme on retrouve un webreader
+                    qui permet de lire certains ebooks directement dans le navigateur.
+
+                    Nous allons tenter d'implémenter la règle qui indique si un livre donné peut-être ou non lu par
+                    ce webreader. À savoir : « un livre peut être lu dans le webreader si c'est un ePub non protégé par Adobe DRM ».
+                </aside>
             </section>
 
             <section>
@@ -183,9 +236,15 @@ class SupportsWebReader implements Specification
                 <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
 
                 <aside class="notes">
-                    Ici, on exprime comment déterminer si un livre peut être lu en ligne.
-                    C'est le squelette classique d'une spécification... si on omet les méthodes
-                    nécessaires à la composition de spécifications.
+                    Le pattern Specification nous dit que notre règle métier sera représentée par une classe.
+
+                    Chacune des spécifications que nous écrirons exposera une méthode "isSatisfiedBy" qui permettra
+                    de déterminer si un objet donné - ici un livre - satisfait la spécification.
+
+                    L'implémentation de cette méthode relève directement de la traduction de notre règle métier
+                    en code.
+
+                    Seulement, rien ne nous permet de composer cette spécification avec d'autres…
                 </aside>
             </section>
 
@@ -214,8 +273,8 @@ class SupportsWebReader implements Specification
                 <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
 
                 <aside class="notes">
-                    Avec ces méthodes on obtient une classe un peu moins jolie,
-                    avec du code boilerplate.
+                    Pour ceci on a besoin de trois nouvelles méthodes qui seront les mêmes pour chacune des spécifications
+                    que nous écrirons.
                 </aside>
             </section>
 
@@ -231,12 +290,15 @@ $isViewableOnline = $spec-&gt;isSatisfiedBy($book); // bool(true)
 </code></pre>
 
                 <aside class="notes">
-                    Mais d'un autre côté l'utilisation et la composition est sympa.
+                    Mais d'un autre côté l'utilisation et la composition est agréable à écrire et à relire.
 
                     Une spécification seule n'a que peu d'intérêt : la composition de plusieurs
                     spécifications permet d'exprimer des règles métier plus complexes.
 
                     On remarque qu'une spécification peut très bien être paramétrée.
+
+                    N.B : la spécification ainsi obtenue représente une "vraie" règle utilisable dans la plateforme.
+                    On peut imaginer qu'elle permet de tester si un livre peut être lu en ligne en france.
                 </aside>
             </section>
 
@@ -269,6 +331,9 @@ $isViewableOnline = $spec-&gt;isSatisfiedBy($book); // bool(true)
                 <aside class="notes">
                     Mais l'expression de la règle métier pourrait être plus claire et
                     cette spécification n'est utilisable que sur un livre dont on a l'instance !
+
+                    Comment pouvons-nous récupérer la liste des livres de notre catalogue qui sont
+                    lisibles dans le webreader?
                 </aside>
             </section>
         </section>
@@ -276,6 +341,11 @@ $isViewableOnline = $spec-&gt;isSatisfiedBy($book); // bool(true)
         <section>
             <section>
                 <h2>RulerZ</h2>
+
+                <aside class="notes">
+                    RulerZ, une bibliothèque que j'ai créé, se propose de résoudre ces deux problèmes que ne
+                    résoud pas le pattern Specification originel.
+                </aside>
             </section>
 
             <section>
@@ -294,7 +364,10 @@ $isViewableOnline = $spec-&gt;isSatisfiedBy($book); // bool(true)
 
                     La même spécification peut donc à la fois servir de manière "classique" pour tester un
                     objet donné mais aussi pour récupérer les objets la satisfaisant à partir d'une base
-                    de données, d'Elasticsearch, …
+                    de données (via Doctrine, POMM, Eloquent, …), d'Elasticsearch, Solr, …
+
+                    On évite ainsi la duplication de nos règles métier d'une part dans le code et d'autre part
+                    dans les requêtes SQL.
                 </aside>
             </section>
 
@@ -309,6 +382,8 @@ format IN :formats_epub AND protection != "adobe drm"
                 <aside class="notes">
                     Le DSL est simple, extensible, volontairement très proche du SQL (mêmes objectifs !)
                     et permet d'exprimer aisément nos règles métier.
+
+                    On retrouve ici la règle écrite précédemment.
                 </aside>
             </section>
 
@@ -325,6 +400,9 @@ $isViewableOnline = $rulerz->satisfies($book, $rule, [
 </code></pre>
 
                 <aside class="notes">
+                    L'utilisation est aussi simple qu'habituellement. On a d'un côté notre règle textuelle,
+                    de l'autre l'objet à tester et on passe les deux à RulerZ. On obtient toujours en sortie
+                    un booléen.
                 </aside>
             </section>
 
@@ -372,7 +450,7 @@ $isViewableOnline = $rulerz->satisfiesSpec($book, $spec); // bool(true)
 
                 <aside class="notes">
                     Que ce soit avec une règle textuelle ou un object de spécification,
-                    vérifier qu'un objet lui est conforme est facile.
+                    vérifier qu'un objet lui est conforme est toujours aussi facile.
                 </aside>
             </section>
 
@@ -401,6 +479,12 @@ var_dump($viewableOnlineBooks); // array&lt;Entity\Book&gt;
                     Il est important de noter qu'à la place d'un QueryBuilder Doctrine,
                     on aurait pu utiliser Pomm, ou un client Elasticsearch pour aller
                     chercher les données ailleurs.
+
+                    Une règle métier exprimée une seule fois dans le code permet donc de valider
+                    un objet ou de retrouver tous les objets la validant. Plus de duplication !
+
+                    En bonus, l'utilisations est aussi simple que pour un objet unique : la règle et
+                    la source de données sont tout ce dont RulerZ à besoin.
                 </aside>
             </section>
         </section>
@@ -408,6 +492,11 @@ var_dump($viewableOnlineBooks); // array&lt;Entity\Book&gt;
         <section>
             <section>
                 <h2>Under the hood</h2>
+
+                <aside class="notes">
+                    À ce moment là de ma présentation, l'audience commence à se poser des questions : on gagne en lisibilité, on déduplique du code… mais que perd-on ?
+                    Les performances peut-être ?
+                </aside>
             </section>
 
             <section>
@@ -437,12 +526,34 @@ Hoa.Document.onReady(function ( ) {
 });
 </script>
 -->
+                <aside class="notes">
+                    Pour montrer que les performances sont toujours très bonnes nous allons rapidement voir
+                    comment RulerZ fonctionne.
+
+                    Car en fait, RulerZ n'est rien d'autre qu'un compilateur qui va traduire vos règles métier
+                    vers du code PHP natif, du SQL, des requêtes Elasticsearch, …
+
+                    Mis à part le coût de compilation à la première utilisation de la règle, les performances
+                    sont donc quasiment natives !
+
+                    Pour ceux qui seraient intéressés, la partie du compilateur qui gère l'analyse du DSL utilise
+                    https://github.com/hoaproject/Compiler/ pour fonctionner.
+                </aside>
             </section>
         </section>
 
         <section>
             <section>
                 <h2>A few use cases</h2>
+
+                <aside class="notes">
+                    Nous avons vu que RulerZ n'est qu'une implémentation du pattern Specification, même
+                    si elle l'augmente considérablement en rajoutant une fonctionnalité de récupération de données.
+
+                    Mais est-ce que c'est tout ce que RulerZ peut faire ?
+
+                    Spoiler alert : nope !
+                </aside>
             </section>
 
             <section>
@@ -488,7 +599,15 @@ class DoctrineBookRepository implements BookRepository
 
                 <aside class="notes">
                     Ce problème est résolu par l'utilisation conjointe des spécifications
-                    et de RulerZ, dans une méthode <code>matching</code>
+                    et de RulerZ, dans une méthode <code>matching</code>.
+                    Une méthode sachant retourner les données correspondant à une spécification,
+                    des spécifications décrivant ces données, le tour est joué !
+
+                    N.B : il faut bien entendu rester pragmatiques. Rien n'empêche d'avoir cette
+                    méthode "matching" en conjonction d'autres méthodes plus "techniques" dont la
+                    valeur ajoutée est faible en terme de métier (récupérer un objet par son identifiant
+                    par exemple). L'utilisation de spécification doit se faire en priorité lorsque la
+                    valeur métier le justifie.
                 </aside>
             </section>
 
@@ -503,6 +622,7 @@ class DoctrineBookRepository implements BookRepository
                 <aside class="notes">
                     Face à un formulaire aussi massif que celui-ci et destiné uniquement à
                     filtrer des données on peut considérer chaque champ comme une "spécification".
+
                     En tirant parti (par exemple) du composant Form de Symfony on peut aisément
                     convertir chaque valeur saisie par l'utilisateur en son équivalent en spécification
                     et se reposer sur RulerZ pour tout ce qui concerne le filtrage des données.
@@ -531,7 +651,10 @@ class DoctrineBookRepository implements BookRepository
                 <aside class="notes">
                     L'exemple classique des bons de réduction : un administrateur
                     peut saisir lui-même via une interface les conditions d'utilisation
-                    d'un bon de réduction.
+                    d'un bon de réduction. Ces règles d'attributions permettront à la fois
+                    de vérifier qu'un bon de réduction peut être utilisé par un client, mais
+                    aussi d'être proactif et d'envoyer un mail aux clients concernés pour les
+                    prévenir et les pousser à l'achat.
                 </aside>
             </section>
         </section>
