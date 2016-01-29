@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>Be specific – Forum PHP 2015</title>
+    <title>Soyez spécifiques</title>
 
     <meta name="author" content="Kévin Gomez" />
 
@@ -31,7 +31,7 @@
     <div class="slides">
         <section>
             <h1>Be specific</h1>
-            <h4>Forum PHP 2015</h4>
+            <h4>DDD Day 2016</h4>
             <p>
                 <small><a href="http://www.kevingomez.fr">Kévin Gomez</a> / <a href="http://twitter.com/KPhoen">@KPhoen</a></small>
             </p>
@@ -155,6 +155,68 @@
                     pour en créer de plus complexes. Par composition on entend simplement des
                     conjonctions de règles (ET logique), disjonctions (OU logique) et négations.
                 </aside>
+            </section>
+
+            <section>
+                <h3>But… how do we do that?</h3>
+
+                <aside class="notes">
+                    Maintenant qu'on sait ce qu'on veut, comment on fait ?
+                    Concrètement, dans notre code, comme tout ça va se traduire ?
+                </aside>
+            </section>
+
+            <section>
+                <h3>Repositories "à la Doctrine" ?</h3>
+
+                <pre><code data-trim>
+class DoctrineBookRepository implements BookRepository
+{
+    public function add(Ebook $book) { }
+    public function remove(Ebook $book) { }
+
+    public function findByEan($ean) { }
+    public function findByTitle($title) { }
+    public function findPublished() { }
+    public function findViewableOnline() { }
+    public function findNotViewableOnline() { }
+
+    public function findPublishedAndViewableOnline() { }
+
+    // …
+}
+                </code></pre>
+
+                <aside class="notes">
+                    Par des repositories "à la Doctrine" ?
+                    Pas vraiment.
+
+                    On encapsule bien la couche de stockage sous-jacente,
+                    mais on a peu de pouvoir expressif, il est difficile de
+                    combiner des critères et chaque nouvelle "requête" nécessite
+                    l'écriture d'une méthode dans ce repository.
+                </aside>
+            </section>
+
+            <section>
+                <h3>What does the Bible say?</h3>
+                <blockquote cite="http://martinfowler.com/eaaCatalog/repository.html">
+                    “A <strong>Repository mediates</strong> between the domain and data mapping layers, acting like an in-memory domain object collection.
+                    <strong>Client objects construct query specifications</strong> declaratively and submit them to Repository for satisfaction.”
+                </blockquote>
+                <small>Martin Fowler &mdash; <a href="http://martinfowler.com/eaaCatalog/repository.html">http://martinfowler.com/eaaCatalog/repository.html</a></small>
+
+                <aside class="notes">
+                    Bon, là on s’arrête, on réfléchit et on revient aux sources : le pattern repository.
+                    On relit et on s’aperçoit qu’on a zappé une couche : les "query specifications".
+                </aside>
+            </section>
+
+            <section>
+                <h3>What does the Bible say?</h3>
+                <p>
+                    <img src="./images/repositorySketch.gif" />
+                </p>
             </section>
 
             <section>
@@ -672,8 +734,6 @@ class DoctrineBookRepository implements BookRepository
 
         <section>
             <h2>Thanks!</h2>
-
-            <p class="small"><a href="http://bit.ly/stage-tea-2016 ">http://bit.ly/stage-tea-2016</a></p>
 
             <p class="small">
                 <a href="http://www.kevingomez.fr">Kévin Gomez</a> / <a href="http://twitter.com/KPhoen">@KPhoen</a>
