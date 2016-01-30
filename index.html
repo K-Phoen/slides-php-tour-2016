@@ -167,6 +167,23 @@
             </section>
 
             <section>
+                <h3>Webreader</h3>
+                <img src="./images/webreader.png" />
+                <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
+
+                <aside class="notes">
+                    Pour imager un peu plus mes propos, voyons concrètement comment implémenter une spécification.
+
+                    Je travaille pour TEA - The Ebook Alternative, une entreprise qui édite une plateforme de vente
+                    et distribution de ebooks. Parmi les fonctionnalités de la plateforme on retrouve un webreader
+                    qui permet de lire certains ebooks directement dans le navigateur.
+
+                    Nous allons tenter d'implémenter la règle qui indique si un livre donné peut-être ou non lu par
+                    ce webreader. À savoir : « un livre peut être lu dans le webreader si c'est un ePub non protégé par Adobe DRM ».
+                </aside>
+            </section>
+
+            <section>
                 <h3>Repositories "à la Doctrine" ?</h3>
 
                 <pre><code data-trim>
@@ -260,23 +277,6 @@ class DoctrineBookRepository implements BookRepository
                     Chaque règle étant encapsulée dans une classe qui la représente.
 
                     Pour exprimer des règles plus complexes, les spécifications sont composables (ET, OU et NON).
-                </aside>
-            </section>
-
-            <section>
-                <h3>Webreader</h3>
-                <img src="./images/webreader.png" />
-                <p><cite>« A book supports the web reader if it's an ePub not protected by Adobe DRM »</cite></p>
-
-                <aside class="notes">
-                    Pour imager un peu plus mes propos, voyons concrètement comment implémenter une spécification.
-
-                    Je travaille pour TEA - The Ebook Alternative, une entreprise qui édite une plateforme de vente
-                    et distribution de ebooks. Parmi les fonctionnalités de la plateforme on retrouve un webreader
-                    qui permet de lire certains ebooks directement dans le navigateur.
-
-                    Nous allons tenter d'implémenter la règle qui indique si un livre donné peut-être ou non lu par
-                    ce webreader. À savoir : « un livre peut être lu dans le webreader si c'est un ePub non protégé par Adobe DRM ».
                 </aside>
             </section>
 
