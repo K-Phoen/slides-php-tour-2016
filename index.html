@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>Soyez spécifiques</title>
+    <title>Be specific</title>
 
     <meta name="author" content="Kévin Gomez" />
 
@@ -19,6 +19,9 @@
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css" />
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+
     <!-- Hoa-related styles (used for the graphs) -->
     <link href="css/hoa/Core.css" rel="stylesheet" />
     <link href="css/hoa/Graph.css" rel="stylesheet" />
@@ -31,15 +34,9 @@
     <div class="slides">
         <section>
             <h1>Be specific</h1>
-            <h4>DDD Day 2016</h4>
+            <h4>PHP Tour 2016</h4>
             <p>
                 <small><a href="http://www.kevingomez.fr">Kévin Gomez</a> / <a href="http://twitter.com/KPhoen">@KPhoen</a></small>
-            </p>
-        </section>
-
-        <section>
-            <p>
-                <img src="./images/dede.jpg" />
             </p>
         </section>
 
@@ -52,52 +49,61 @@
         <section>
             <section>
                 <p>
-                    Application complexity keeps increasing
+                    <blockquote cite="https://www.deudtens.com/je-code-sans-specs/">
+                        J'adore coder sans spécifications
+                    </blockquote>
+                    <small>Deudtens &mdash; a.k.a. Olivier Servières &mdash; <a href="https://www.deudtens.com/je-code-sans-specs/">https://www.deudtens.com/je-code-sans-specs/</a></small>
                 </p>
 
                 <aside class="notes">
-                    Depuis quelques années la complexité des applications web est à la hausse.
-                    Que ce soit côté frontend ou côté backend, nos applications
-                    et d'une manière générale les besoins auxquelles elles répondent
-                    sont de plus en plus complexes.
+                    J'aimerais commencer en vous parlant d'un article rédigé par un de
+                    mes collègues, dans lequel il nous explique qu'il aime coder sans
+                    spécifications.
+                    Pour lui, pas de spécification équivaut à un haut degré de liberté
+                    quant aux fonctionnalités à implémenter. Il "fait ce qu'il veut",
+                    il est heureux.
+                    Sauf qu'il se rend vite compte que quand la définition du besoin
+                    tient en une phrase "je veux vendre mes produits à l'étranger",
+                    et bien des questions se posent. Rapidement.
+                    Et c'est justement à partir de ce moment là qu'Olivier dit des
+                    choses intéressantes : lui qui ne connait pas bien le besoin (et
+                    parfois même le métier) va échanger avec l'expert du domaine pour
+                    clarifier ce qu'il doit implémenter.
+                    On a donc un échange qui s'établit entre deux personnes issues de
+                    mondes totalement différents, qui doivent parvenir à se comprendre
+                    pour tendre vers un but commun : la réalisation de la feature ou
+                    du projet.
                 </aside>
             </section>
 
             <section>
                 <p>
-                    Languages / Tools / Design patterns / …
+                    Ubiquitous language
                 </p>
-
+                <p>
+                    <i class="fa fa-reddit-alien" style="font-size: 7rem;"></i>
+                    <i style="font-size: 5rem; margin:4rem;">↔</i>
+                    <i class="fa fa-pied-piper-alt" style="font-size: 7rem;"></i>
+                </p>
                 <aside class="notes">
-                    Pour répondre à cette tendance, les technologies que nous utilisons évoluent.
-                    On identifie des design patterns, on améliore nos langages de programmation
-                    et on développe de nombreux outils destinés à nous épauler dans nos tâches
-                    quotidiennes.
+                    Mais pour être capable de se comprendre et d'avancer ensemble,
+                    il faut au minimum un langage ou un vocabulaire commun.
+                    C'est l'idée du "ubiquitous language" qu'on retrouve dans le
+                    DDD (ayé, j'ai placé un buzzword, je peux respirer).
+                    Le fonctionnel va expliquer ce qu'il attend en utilisant des
+                    termes qu'il connait et le développeur va essayer d'assimiler
+                    le métier et les règles qui le régissent.
                 </aside>
             </section>
 
             <section>
                 <p>
-                    Agile / BDD / DDD / …
+                    Ubiquitous language &amp; Business rules
                 </p>
 
                 <aside class="notes">
-                    Et en parallèle de nos outils, nos méthodes évoluent. Souvent avec une mise
-                    en avant du comportement de l'application, du métier ou du domaine.
-                </aside>
-            </section>
-
-            <section>
-                <p>« Web applications » over « Websites »</p>
-                <p class="fragment">« Business rules » over « Code »</p>
-
-                <aside class="notes">
-                    De l'évolution des besoins découle une évolution des priorités et des manières
-                    de développer des applications.
-
-                    On ne parle d'ailleurs plus de "site web" mais "d'application web". De même, notre
-                    attention se porte plus particulièrement vers les aspects métier de notre projet, vers
-                    le domaine que l'on modélise et ses règles de fonctionnement.
+                    C'est justement la compréhension et la retranscription
+                    de ces règles qui va nous intéresser ici.
 
                     En tant que développeur, nous produisons de la valeur ajoutée en écrivant du code.
                     Ou plus exactement en développant des outils destinés à répondre aux besoins de nos
@@ -113,7 +119,7 @@
                 <h3>What should we do with these business rules?</h3>
 
                 <aside class="notes">
-                    On se rend compte qu'au delà des aspects purement techniques
+                    On se rend vite compte qu'au delà des aspects purement techniques
                     des applications web contemporaines se dégage une notion
                     primordiale : celle du domaine métier et des règles qui le régissent.
 
@@ -190,6 +196,40 @@
             </section>
 
             <section>
+                <h3>Is a book viewable online?</h3>
+
+                <pre><code data-trim>
+class Book
+{
+    const FORMATS_EPUB = ['epub', 'epub 3', 'epub fixed layout'];
+
+    public function isViewableOnline()
+    {
+        return in_array($this-&gt;getFormat(), self::FORMATS_EPUB)
+            &amp;&amp; $this-&gt;getProtection() !== 'adobe drm';
+    }
+
+    // …
+}
+                </code></pre>
+
+                <aside class="notes">
+                    Continuons sur les exemples.
+
+                    Comment ferait-on pour vérifier si un livre donné est compatible
+                    avec le webreader?
+
+                    À priori on aurait tendance à ajouter dans la classe `Book` une
+                    méthode qui ferait les vérifications.
+                    Côté pouvoir expressif, on a l'impression que tout va bien.
+                    La composition de plusieurs règles métier devra cependant se faire
+                    ailleurs (livre compatible ET acheté par l'utilisateur courant ?).
+
+                    Passons.
+                </aside>
+            </section>
+
+            <section>
                 <h3>Repositories "à la Doctrine" ?</h3>
 
                 <pre><code data-trim>
@@ -211,6 +251,11 @@ class DoctrineBookRepository implements BookRepository
                 </code></pre>
 
                 <aside class="notes">
+                    Autre exemple : comment ferait-on pour lister les livres
+                    compatibles avec le webreader ? Les livres compatibles ET
+                    publiés ? Les livres compatibles ET achetés par l'utilisateur
+                    courant ?
+
                     Par des repositories "à la Doctrine" ?
                     Pas vraiment.
 
