@@ -379,7 +379,7 @@ class SupportsWebReader implements Specification
     {
         return new AndSpecification($this, $spec);
     }
-    public function orSatisfies(Specification $spec) { /* … */ }
+    public function orX(Specification $spec) { /* … */ }
     public function not() { /* … */ }
 }
                 </code></pre>
@@ -653,6 +653,7 @@ Hoa.Document.onReady(function ( ) {
                     https://github.com/hoaproject/Compiler/ pour fonctionner.
                 </aside>
             </section>
+            <!-- TODO maybe show a compiled rule? -->
         </section>
 
         <section>
@@ -740,6 +741,47 @@ class DoctrineBookRepository implements BookRepository
                     convertir chaque valeur saisie par l'utilisateur en son équivalent en spécification
                     et se reposer sur RulerZ pour tout ce qui concerne le filtrage des données.
                 </aside>
+            </section>
+
+            <section>
+                <h2>Search forms</h2>
+
+                <pre><code class="php" data-trim>
+public function buildForm(FormBuilderInterface $builder, array $options)
+{
+    // …
+
+    $builder->add('author', 'text', [
+        'spec_class' => Spec\Book\AuthorLike::class
+    ]]);
+}
+</code></pre>
+            </section>
+
+            <section>
+                <h2>Search forms</h2>
+
+                <pre><code class="php" data-trim>
+public function catalogAction(/* … */)
+{
+    // …
+
+    if ($form->isValid()) {
+        $spec = new Spec\AndX(
+            array_filter($form->getData()) // remove empty fields/specs
+        );
+        $results = $this->booksRepository->matchingSpec($spec);
+    }
+
+    // …
+}
+</code></pre>
+            </section>
+
+            <section>
+                <h2>Search forms</h2>
+
+                <img src="./images/filters_summary.png" />
             </section>
 
             <section style="width: 120%; margin-left: -10%">
