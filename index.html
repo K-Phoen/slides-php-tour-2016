@@ -770,7 +770,7 @@ public function catalogAction(/* … */)
         $spec = new Spec\AndX(
             array_filter($form->getData()) // remove empty fields/specs
         );
-        $results = $this->booksRepository->matchingSpec($spec);
+        $results = $this->booksRepository->matching($spec);
     }
 
     // …
