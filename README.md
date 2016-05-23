@@ -1,5 +1,5 @@
-Be Specific - Forum PHP 2015
-============================
+Be Specific - PHP Tour 2016
+===========================
 
-Slides of a [talk given at the Forum PHP 2015](http://event.afup.org/forum-php-2015/programme/#1604),
+Slides of a [talk given at the PHP Tour 2016](http://event.afup.org/php-tour-2016/programme/#1713),
 organized by the AFUP.
